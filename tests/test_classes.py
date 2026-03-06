@@ -1,5 +1,4 @@
-import pytest
-from src.classes import Product, Category
+from src.classes import Category, Product
 
 
 def test_product_init():
