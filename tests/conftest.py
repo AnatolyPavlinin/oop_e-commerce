@@ -17,4 +17,3 @@ def reset_category_counters():
     yield
     Category.category_count = 0
     Category.product_count = 0
-

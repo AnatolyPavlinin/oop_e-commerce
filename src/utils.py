@@ -4,20 +4,17 @@ from typing import List
 
 from src.classes import Product, Category
 
+
 def load_categories_from_json(json_file: str) -> List[Category]:
     """Функция читает данные из json-файла и возваращает список категорий товаров"""
     full_path = os.path.abspath("../data/products.json")
-    with open(full_path, 'r', encoding="UTF-8") as file:
+    with open(full_path, "r", encoding="UTF-8") as file:
         categories_data = json.load(file)
     categories = []
     for cat_data in categories_data:
         products_list = [
-            Product(
-                prod["name"],
-                prod["description"],
-                prod["price"],
-                prod["quantity"]
-            ) for prod in cat_data["products"]
+            Product(prod["name"], prod["description"], prod["price"], prod["quantity"])
+            for prod in cat_data["products"]
         ]
         category = Category(cat_data["name"], cat_data["description"], products_list)
         categories.append(category)
