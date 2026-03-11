@@ -1,3 +1,5 @@
+import pytest
+
 from src.product import Product
 
 
@@ -60,3 +62,43 @@ def test_price_property():
     # Проверяем защиту от некорректных значений
     product.price = -50.0
     assert product.price == 150.0  # Значение не изменится
+
+
+def test_add_method_correctness(sample_products):
+    """Проверяет основную функциональность метода __add__"""
+    p1, p2 = sample_products[:2]
+    expected_result = p1.full_cost() + p2.full_cost()
+    assert p1 + p2 == expected_result
+
+
+def test_add_multiple_products(sample_products):
+    """Проверяет сложение нескольких товаров"""
+    p1, p2 = sample_products[:2]
+    third_product = Product("Монитор", "Компьютерный монитор", 14999.00, 3)
+    all_products = [p1, p2, third_product]
+    expected_result = sum(product.full_cost() for product in all_products)
+    actual_result = (
+        p1.full_cost() + p2.full_cost() + third_product.full_cost()
+    )  # Прямо считаем полную стоимость вручную
+    assert actual_result == expected_result
+
+
+def test_type_error_on_incorrect_types(sample_products):
+    """Проверяет обработку неверных типов данных"""
+    p1 = sample_products[0]
+    with pytest.raises(TypeError):
+        p1 + "Некорректный объект"
+
+
+def test_empty_product_case(sample_products):
+    """Проверяет ситуацию с пустым продуктом"""
+    p1 = sample_products[0]
+    empty_product = Product("", "", 0, 0)
+    result = p1 + empty_product
+    assert result == p1.full_cost()
+
+
+def test_str(sample_products):
+    product = sample_products[0]
+    expected_output = f"{product.name}, {product.price:.2f} руб. Остаток: {product.quantity} шт."
+    assert str(product) == expected_output

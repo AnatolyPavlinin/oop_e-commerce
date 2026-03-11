@@ -12,6 +12,22 @@ class Product:
         self.__price = price
         self.quantity = quantity
 
+    def __str__(self):
+        """Добавляем строкове отображение в виде:
+        Название продукта, 80 руб. Остаток: 15 шт
+        """
+        return f"{self.name}, {self.__price:.2f} руб. Остаток: {self.quantity} шт."
+
+    def __add__(self, other):
+        """Перегрузка оператора '+' для вычисления общей стоимости товаров"""
+        if not isinstance(other, Product):
+            raise TypeError("Можно складывать только объекты класса Product")
+        return self.full_cost() + other.full_cost()
+
+    def full_cost(self) -> float:
+        """Возвращает полную стоимость товара"""
+        return self.price * self.quantity
+
     @classmethod
     def new_product(cls, data: dict, existing_products: list = None) -> "Product":
         """

@@ -30,6 +30,13 @@ class Category:
         Category.category_count += 1
         Category.product_count += len(initial_products)
 
+    def __str__(self):
+        """Добавляем строкове отображение в виде:
+        Название категории, количество продуктов: 200 шт.
+        """
+        total_quantity = sum(product.quantity for product in self.__products)
+        return f"{self.name}, количество продуктов: {total_quantity} шт"
+
     def add_product(self, product: Product) -> None:
         """
         Добавляет продукт в категорию.
@@ -46,5 +53,5 @@ class Category:
         """
         result = []  # Используем список для хранения каждой записи
         for product in self.__products:
-            result.append(f"{product.name}, {product.price:.2f} руб. Остаток: {product.quantity} шт.")
+            result.append(str(product))
         return "\n".join(result)  # Объединяем элементы списка с переносом строки

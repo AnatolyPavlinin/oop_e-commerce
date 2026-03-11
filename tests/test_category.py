@@ -2,15 +2,22 @@ from src.category import Category
 from src.product import Product
 
 
-def test_category_init(sample_products, reset_category_counters):
+def test_category_init(sample_products):
     category = Category("Электроника", "Техника и гаджеты", sample_products)
 
+    # Проверка базовых атрибутов
     assert category.name == "Электроника"
     assert category.description == "Техника и гаджеты"
+
+    # Проверка строки категории
+    expected_category_string = "Электроника, количество продуктов: 15 шт"
+    assert str(category) == expected_category_string
+
+    # Проверка содержимого товаров (используем временный доступ к приватному атрибуту)
     expected_product_strings = "\n".join(
         [f"{p.name}, {p.price:.2f} руб. Остаток: {p.quantity} шт." for p in sample_products]
     )
-    actual_product_strings = category.products
+    actual_product_strings = "\n".join(map(str, category._Category__products))  # Доступ к приватному атрибуту
     assert actual_product_strings == expected_product_strings
 
 
@@ -52,3 +59,10 @@ def test_getting_list_of_product(sample_products, reset_category_counters):
     # Проверяем корректность формата вывода списка товаров
     expected_output = "Телефон, 19999.99 руб. Остаток: 10 шт.\n" "Ноутбук, 79999.50 руб. Остаток: 5 шт."
     assert category.products == expected_output
+
+
+def test_category_str(sample_products):
+    """Тестирует метод __str__"""
+    category = Category("Электроника", "Электронные устройства", sample_products)
+    expected_output = "Электроника, количество продуктов: 15 шт"
+    assert str(category) == expected_output
