@@ -19,9 +19,9 @@ class Product:
         return f"{self.name}, {self.__price:.2f} руб. Остаток: {self.quantity} шт."
 
     def __add__(self, other):
-        """Перегрузка оператора '+' для вычисления общей стоимости товаров"""
-        if not isinstance(other, Product):
-            raise TypeError("Можно складывать только объекты класса Product")
+        """Перегрузка оператора '+', теперь складываются только товары одного класса."""
+        if type(self) != type(other):
+            raise TypeError("Нельзя суммировать объекты разных классов")
         return self.full_cost() + other.full_cost()
 
     def full_cost(self) -> float:
@@ -69,3 +69,58 @@ class Product:
             print("Цена не должна быть нулевая или отрицательная")  # Сообщение в консоль
         else:
             self.__price = value  # Устанавливаем новое значение, если оно валидно
+
+
+class Smartphone(Product):
+    def __init__(
+        self,
+        name: str,
+        description: str,
+        price: float,
+        quantity: int,
+        efficiency: float,
+        model: str,
+        memory: int,
+        color: str,
+    ) -> None:
+        super().__init__(name, description, price, quantity)
+        self.efficiency = efficiency
+        self.model = model
+        self.memory = memory
+        self.color = color
+
+    def __str__(self):  # Переопределяем метод __str__
+
+        base_string = super().__str__()
+
+        # Добавляем уникальные атрибуты смартфона
+        additional_details = (
+            f"\nЭффективность: {self.efficiency}%\nМодель: {self.model}\nПамять: {self.memory} ГБ\nЦвет: {self.color}"
+        )
+        return base_string + additional_details
+
+
+class LawnGrass(Product):
+    def __init__(
+        self,
+        name: str,
+        description: str,
+        price: float,
+        quantity: int,
+        country: str,
+        germination_period: str,
+        color: str,
+    ) -> None:
+        super().__init__(name, description, price, quantity)
+        self.country = country
+        self.germination_period = germination_period
+        self.color = color
+
+    def __str__(self):
+        """Форматирует строку для газонной травы с добавлением дополнительных атрибутов"""
+        base_string = super().__str__()  # Вызываем родительский метод __str__
+        additional_details = (
+            f"\nСтрана: {self.country}\n" f"Герминация: {self.germination_period}\n" f"Цвет: {self.color}"
+        )
+
+        return base_string + additional_details

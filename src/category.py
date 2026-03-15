@@ -40,10 +40,13 @@ class Category:
     def add_product(self, product: Product) -> None:
         """
         Добавляет продукт в категорию.
-        product: Объект типа Product
+        product: Объект типа Product или его подкласс
         """
-        self.__products.append(product)
-        Category.product_count += 1  # Увеличиваем общее число продуктов
+        if isinstance(product, Product):
+            self.__products.append(product)
+            Category.product_count += 1
+        else:
+            raise TypeError("Возникла ошибка TypeError при добавлении не продукта")
 
     @property
     def products(self):

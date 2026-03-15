@@ -1,3 +1,5 @@
+import pytest
+
 from src.category import Category
 from src.product import Product
 
@@ -50,6 +52,41 @@ def test_add_product(sample_products, reset_category_counters):
 
     # Проверяем, что общий счетчик продуктов увеличен
     assert Category.product_count == 3
+
+
+def test_valid_product_addition(sample_category, valid_products):
+    """Проверяет успешное добавление валидных продуктов"""
+    for product in valid_products:
+        sample_category.add_product(product)
+        assert product in sample_category._Category__products  # Проверяем, что продукт попал в список
+        assert Category.product_count > 0  # Проверяем увеличение общего количества продуктов
+
+
+def test_invalid_product_addition(sample_category, invalid_objects):
+    """Проверяет обработку попыток добавления недопустимых объектов"""
+    for obj in invalid_objects:
+        with pytest.raises(TypeError):
+            sample_category.add_product(obj)
+
+
+def test_product_count_update(sample_category, valid_products):
+    """Проверяет обновление количества продуктов при добавлении новых элементов"""
+    initial_count = Category.product_count
+    for product in valid_products:
+        sample_category.add_product(product)
+    final_count = Category.product_count
+    assert final_count == initial_count + len(valid_products)
+
+
+def test_multiple_additions(sample_category, valid_products):
+    """Проверяет множественное добавление продуктов"""
+    for product in valid_products:
+        sample_category.add_product(product)
+    assert len(sample_category._Category__products) == len(valid_products)
+
+
+def test_reset_after_test(reset_category_counters):
+    """Проверяет восстановление счётчика после завершения тестов"""
 
 
 # Тестируем геттер getting_list_of_product
