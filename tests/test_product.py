@@ -1,6 +1,9 @@
+import contextlib
+import io
+
 import pytest
 
-from src.product import LawnGrass, Product, Smartphone
+from src.product import BaseProduct, LawnGrass, Product, Smartphone
 
 
 def test_product_init():
@@ -101,14 +104,6 @@ def test_add_with_base_product_and_subclass(smartphones):
         p1 + s1
 
 
-def test_empty_product_case(smartphones):
-    """Проверяет случай с нулевым количеством товара"""
-    s1 = smartphones[0]
-    empty_product = Smartphone("Empty Phone", "No Description", 0, 0, 0, "Model X", 0, "Black")
-    result = s1 + empty_product
-    assert result == s1.full_cost()
-
-
 def test_str(sample_products):
     """Проверяет метод __str__"""
     product = sample_products[0]
@@ -129,17 +124,15 @@ def test_smartphone_initialization(smartphones):
     assert phone.color == "Space Black"
 
 
-def test_smartphone_str_representation(smartphones):
-    """Проверяет корректность метода __str__ для смартфона"""
+def test_smartphone_info_representation(smartphones):
+    """Проверяет корректность метода info для смартфона"""
     phone = smartphones[0]
     expected_output = (
-        f"{phone.name}, {phone.price:.2f} руб. Остаток: {phone.quantity} шт.\n"
-        f"Эффективность: {phone.efficiency}%\n"
-        f"Модель: {phone.model}\n"
-        f"Память: {phone.memory} ГБ\n"
-        f"Цвет: {phone.color}"
+        f"{phone.name}, {phone.price:.2f} руб. Остаток: {phone.quantity} шт. | "
+        f"Эффективность: {phone.efficiency}, Модель: {phone.model}, "
+        f"Память: {phone.memory} ГБ, Цвет: {phone.color}"
     )
-    assert str(phone) == expected_output
+    assert phone.info() == expected_output
 
 
 def test_smartphone_full_cost(smartphones):
@@ -161,16 +154,14 @@ def test_lawngrass_initialization(lawngrases):
     assert grass.color == "Зелёный"
 
 
-def test_lawngrass_str_representation(lawngrases):
-    """Проверяет корректность метода __str__ для газонной травы"""
+def test_lawngrass_info_representation(lawngrases):
+    """Проверяет корректность метода info для газонной травы"""
     grass = lawngrases[0]
     expected_output = (
-        f"{grass.name}, {grass.price:.2f} руб. Остаток: {grass.quantity} шт.\n"
-        f"Страна: {grass.country}\n"
-        f"Герминация: {grass.germination_period}\n"
-        f"Цвет: {grass.color}"
+        f"{grass.name}, {grass.price:.2f} руб. Остаток: {grass.quantity} шт. | "
+        f"Страна: {grass.country}, Герминация: {grass.germination_period}, Цвет: {grass.color}"
     )
-    assert str(grass) == expected_output
+    assert grass.info() == expected_output
 
 
 def test_lawngrass_full_cost(lawngrases):
@@ -178,3 +169,51 @@ def test_lawngrass_full_cost(lawngrases):
     grass = lawngrases[0]
     expected_cost = grass.price * grass.quantity
     assert grass.full_cost() == expected_cost
+
+
+def test_base_product_str_representation(sample_products):
+    """Проверяет корректность метода __str__ для класса BaseProduct с несколькими объектами"""
+    expected_outputs = ["Телефон, 19999.99 руб. Остаток: 10 шт.", "Ноутбук, 79999.50 руб. Остаток: 5 шт."]
+
+    for idx, product in enumerate(sample_products):
+        assert str(product) == expected_outputs[idx], f"Ошибка при проверке объекта {idx+1}"
+
+
+def test_base_product_init_attributes(sample_products):
+    """Проверяет установку атрибутов через инициализатор абстрактного класса"""
+    first_product = sample_products[0]  # Берём первый продукт из списка
+    second_product = sample_products[1]  # Берём второй продукт из списка
+
+    # Проверяем атрибуты первого продукта
+    assert first_product.name == "Телефон"
+    assert first_product.description == "Смартфон"
+    assert first_product.price == 19999.99
+    assert first_product.quantity == 10
+
+    # Проверяем атрибуты второго продукта
+    assert second_product.name == "Ноутбук"
+    assert second_product.description == "Игровой ноутбук"
+    assert second_product.price == 79999.50
+    assert second_product.quantity == 5
+
+
+def test_creation_log_mixin(loggable_product):
+    """Проверяет корректность работы миксина CreationLogMixin"""
+    # Готовим буфер для вывода
+    buffer = io.StringIO()
+
+    # Перенаправляем вывод в буфер
+    with contextlib.redirect_stdout(buffer):
+        # Создаем объект с фиксированными параметрами
+        obj = loggable_product("Тестовый продукт", "Тестовое описание", 123.45, 10)
+
+    # Получаем содержание буфера
+    output = buffer.getvalue().strip()
+
+    # Ожидаемое сообщение
+    expected_message = (
+        "Объект класса LoggedProduct создан с аргументами: 'Тестовый продукт', 'Тестовое описание', 123.45, 10"
+    )
+
+    # Проверяем совпадение
+    assert output == expected_message

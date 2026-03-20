@@ -1,7 +1,7 @@
 import pytest
 
 from src.category import Category
-from src.product import LawnGrass, Product, Smartphone
+from src.product import CreationLogMixin, LawnGrass, Product, Smartphone
 
 
 @pytest.fixture
@@ -59,3 +59,13 @@ def valid_products():
 def invalid_objects():
     """Создание набора недопустимых объектов"""
     return ["String", 123, True, {"key": "value"}]
+
+
+@pytest.fixture
+def loggable_product():
+    """Фикстура для создания объекта, наследующего миксин и фиксирующего вывод"""
+
+    class LoggedProduct(CreationLogMixin, Product):
+        pass
+
+    return LoggedProduct

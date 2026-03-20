@@ -1,22 +1,44 @@
-class Product:
-    """Класс товаров"""
+from abc import ABC, abstractmethod
 
-    name: str  # название
-    description: str  # описание
-    price: int  # цена
-    quantity: int  # количество
+
+class BaseProduct(ABC):
+    """Абстрактный класс для всех продуктов"""
 
     def __init__(self, name: str, description: str, price: float, quantity: int) -> None:
         self.name = name
         self.description = description
-        self.__price = price
+        self.price = price
         self.quantity = quantity
 
-    def __str__(self):
-        """Добавляем строкове отображение в виде:
+    def __str__(self) -> str:
+        """Добавляем строковое отображение в виде:
         Название продукта, 80 руб. Остаток: 15 шт
         """
-        return f"{self.name}, {self.__price:.2f} руб. Остаток: {self.quantity} шт."
+        return f"{self.name}, {self.price:.2f} руб. Остаток: {self.quantity} шт."
+
+
+class CreationLogMixin:
+    """Миксин для регистрации создания объекта."""
+
+    def __init__(self, *args, **kwargs):
+        # Определяем имя класса
+        class_name = self.__class__.__name__
+        # Объединяем аргументы в единую строку
+        args_repr = ", ".join(repr(a) for a in args)
+        kwargs_repr = ", ".join(f"{k}={v!r}" for k, v in kwargs.items())
+        # Формируем сообщение
+        message = f"Объект класса {class_name} создан с аргументами: {args_repr}, {kwargs_repr}".strip(", ")
+        # Выводим сообщение
+        print(message)
+        # Продолжаем вызов родительского конструктора
+        super().__init__(*args, **kwargs)
+
+
+class Product(BaseProduct):
+    """Класс товаров"""
+
+    def __init__(self, name: str, description: str, price: float, quantity: int) -> None:
+        super().__init__(name, description, price, quantity)
 
     def __add__(self, other):
         """Перегрузка оператора '+', теперь складываются только товары одного класса."""
@@ -89,15 +111,12 @@ class Smartphone(Product):
         self.memory = memory
         self.color = color
 
-    def __str__(self):  # Переопределяем метод __str__
-
-        base_string = super().__str__()
-
-        # Добавляем уникальные атрибуты смартфона
-        additional_details = (
-            f"\nЭффективность: {self.efficiency}%\nМодель: {self.model}\nПамять: {self.memory} ГБ\nЦвет: {self.color}"
+    def info(self) -> str:
+        """Дополнительная информация о смартфоне"""
+        return (
+            f"{super().__str__()} | Эффективность: {self.efficiency}, Модель: {self.model}, "
+            f"Память: {self.memory} ГБ, Цвет: {self.color}"
         )
-        return base_string + additional_details
 
 
 class LawnGrass(Product):
@@ -116,11 +135,8 @@ class LawnGrass(Product):
         self.germination_period = germination_period
         self.color = color
 
-    def __str__(self):
-        """Форматирует строку для газонной травы с добавлением дополнительных атрибутов"""
-        base_string = super().__str__()  # Вызываем родительский метод __str__
-        additional_details = (
-            f"\nСтрана: {self.country}\n" f"Герминация: {self.germination_period}\n" f"Цвет: {self.color}"
+    def info(self) -> str:
+        """Дополнительная информация о газонной траве"""
+        return (
+            f"{super().__str__()} | Страна: {self.country}, Герминация: {self.germination_period}, Цвет: {self.color}"
         )
-
-        return base_string + additional_details

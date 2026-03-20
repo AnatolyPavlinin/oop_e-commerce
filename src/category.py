@@ -1,4 +1,4 @@
-from src.product import Product
+from src.product import BaseProduct, Product
 
 
 class Category:
@@ -54,7 +54,4 @@ class Category:
         Геттер, который выводит список товаров в формате:
         Продукт, 'цена' руб. Остаток: '' шт.
         """
-        result = []  # Используем список для хранения каждой записи
-        for product in self.__products:
-            result.append(str(product))
-        return "\n".join(result)  # Объединяем элементы списка с переносом строки
+        return "\n".join(map(str, self.__products))
