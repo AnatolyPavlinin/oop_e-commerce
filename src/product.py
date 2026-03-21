@@ -4,16 +4,11 @@ from abc import ABC, abstractmethod
 class BaseProduct(ABC):
     """Абстрактный класс для всех продуктов"""
 
-    def __init__(self, name: str, description: str, price: float, quantity: int) -> None:
-        self.name = name
-        self.description = description
-        self.price = price
-        self.quantity = quantity
-
     @abstractmethod
     def info(self) -> str:
         pass
 
+    @abstractmethod
     def __str__(self) -> str:
         pass
 
@@ -31,15 +26,19 @@ class CreationLogMixin:
         message = f"Объект класса {class_name} создан с аргументами: {args_repr}, {kwargs_repr}".strip(", ")
         # Выводим сообщение
         print(message)
-        # Продолжаем вызов родительского конструктора
-        super().__init__(*args, **kwargs)
+        # Вызываем конструктор самого верхнего базового класса (object), который не принимает args/kwargs
+        super().__init__()
 
 
-class Product(BaseProduct):
+class Product(BaseProduct, CreationLogMixin):
     """Класс товаров"""
 
     def __init__(self, name: str, description: str, price: float, quantity: int) -> None:
         super().__init__(name, description, price, quantity)
+        self.name = name
+        self.description = description
+        self.price = price
+        self.quantity = quantity
 
     def __add__(self, other):
         """Перегрузка оператора '+', теперь складываются только товары одного класса."""

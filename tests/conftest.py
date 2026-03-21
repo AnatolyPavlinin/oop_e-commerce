@@ -65,7 +65,7 @@ def invalid_objects():
 def loggable_product():
     """Фикстура для создания объекта, наследующего миксин и фиксирующего вывод"""
 
-    class LoggedProduct(CreationLogMixin, Product):
+    class LoggedProduct(Product):
         pass
 
     return LoggedProduct
