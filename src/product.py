@@ -10,11 +10,12 @@ class BaseProduct(ABC):
         self.price = price
         self.quantity = quantity
 
+    @abstractmethod
+    def info(self) -> str:
+        pass
+
     def __str__(self) -> str:
-        """Добавляем строковое отображение в виде:
-        Название продукта, 80 руб. Остаток: 15 шт
-        """
-        return f"{self.name}, {self.price:.2f} руб. Остаток: {self.quantity} шт."
+        pass
 
 
 class CreationLogMixin:
@@ -46,9 +47,16 @@ class Product(BaseProduct):
             raise TypeError("Нельзя суммировать объекты разных классов")
         return self.full_cost() + other.full_cost()
 
+    def __str__(self) -> str:
+        return f"{self.name}, {self.price:.2f} руб. Остаток: {self.quantity} шт."
+
     def full_cost(self) -> float:
         """Возвращает полную стоимость товара"""
         return self.price * self.quantity
+
+    def info(self) -> str:
+        """Базовая информация о товаре"""
+        return f"{self.__str__()} | Описание: {self.description}"
 
     @classmethod
     def new_product(cls, data: dict, existing_products: list = None) -> "Product":

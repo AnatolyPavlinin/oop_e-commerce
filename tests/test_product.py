@@ -3,7 +3,7 @@ import io
 
 import pytest
 
-from src.product import BaseProduct, LawnGrass, Product, Smartphone
+from src.product import LawnGrass, Product
 
 
 def test_product_init():
@@ -176,7 +176,7 @@ def test_base_product_str_representation(sample_products):
     expected_outputs = ["Телефон, 19999.99 руб. Остаток: 10 шт.", "Ноутбук, 79999.50 руб. Остаток: 5 шт."]
 
     for idx, product in enumerate(sample_products):
-        assert str(product) == expected_outputs[idx], f"Ошибка при проверке объекта {idx+1}"
+        assert str(product) == expected_outputs[idx], f"Ошибка при проверке объекта {idx + 1}"
 
 
 def test_base_product_init_attributes(sample_products):
@@ -205,7 +205,7 @@ def test_creation_log_mixin(loggable_product):
     # Перенаправляем вывод в буфер
     with contextlib.redirect_stdout(buffer):
         # Создаем объект с фиксированными параметрами
-        obj = loggable_product("Тестовый продукт", "Тестовое описание", 123.45, 10)
+        loggable_product("Тестовый продукт", "Тестовое описание", 123.45, 10)
 
     # Получаем содержание буфера
     output = buffer.getvalue().strip()
@@ -215,5 +215,4 @@ def test_creation_log_mixin(loggable_product):
         "Объект класса LoggedProduct создан с аргументами: 'Тестовый продукт', 'Тестовое описание', 123.45, 10"
     )
 
-    # Проверяем совпадение
     assert output == expected_message
