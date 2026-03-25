@@ -55,3 +55,17 @@ class Category:
         Продукт, 'цена' руб. Остаток: '' шт.
         """
         return "\n".join(map(str, self.__products))
+
+    def middle_price(self) -> float:
+        """
+        Подсчитывает средний ценник  всех товаров в категории.
+        Если товаров нет, возвращает 0.0.
+        """
+        try:
+            # Создаем список цен всех товаров в категории
+            prices = [product.price for product in self.__products]
+
+            return sum(prices) / len(prices)
+
+        except ZeroDivisionError:
+            return 0.0

@@ -1,7 +1,7 @@
 import pytest
 
 from src.category import Category
-from src.product import CreationLogMixin, LawnGrass, Product, Smartphone
+from src.product import LawnGrass, Product, Smartphone
 
 
 @pytest.fixture
@@ -10,6 +10,15 @@ def sample_products():
         Product("Телефон", "Смартфон", 19999.99, 10),
         Product("Ноутбук", "Игровой ноутбук", 79999.50, 5),
     ]
+
+
+@pytest.fixture
+def category_with_products(sample_products):
+    """Фикстура, возвращающая категорию, наполненную товарами из фикстуры sample_products."""
+    category = Category(name="Электроника", description="Гаджеты и техника")
+    for product in sample_products:
+        category.add_product(product)
+    return category
 
 
 @pytest.fixture

@@ -216,3 +216,14 @@ def test_creation_log_mixin(loggable_product):
     )
 
     assert output == expected_message
+
+
+def test_zero_quantity_raises_error():
+    """
+    Тест проверяет, что создание товара с quantity=0
+    вызывает исключение ValueError с правильным сообщением.
+    """
+
+    with pytest.raises(ValueError) as exc_info:
+        Product("Бананы", "Вкусные", 100.0, 0)
+    assert str(exc_info.value) == "Товар с нулевым количеством не может быть добавлен"

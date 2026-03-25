@@ -103,3 +103,26 @@ def test_category_str(sample_products):
     category = Category("Электроника", "Электронные устройства", sample_products)
     expected_output = "Электроника, количество продуктов: 15 шт"
     assert str(category) == expected_output
+
+
+def test_average_price_for_empty_category():
+    """
+    Проверяет, что метод average_price возвращает 0.0,
+    если в категории нет товаров.
+    """
+    # Создаем пустую категорию
+    empty_category = Category(name="Пустая", description="нету")
+    result = empty_category.middle_price()
+    assert result == 0.0
+
+
+def test_average_price_with_products(category_with_products):
+    """
+    Проверяет корректность расчета средней цены (ценника).
+    """
+
+    headphones = Product("Наушники", "Беспроводные", 5000.00, 15)
+    category_with_products.add_product(headphones)
+    result = category_with_products.middle_price()
+    expected_average = 34999.83
+    assert result == pytest.approx(expected_average)
